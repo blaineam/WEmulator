@@ -169,7 +169,12 @@
             }
 
             function system() {
-                return window.location.hash.substr(1);
+                let current = window.location.hash.substr(1)
+                if (current.length == 0) {
+                    current = 'all';
+                    window.location.hash = current;
+                };
+                return current;
             }
 
             fetch('roms/map.json').then(response => {

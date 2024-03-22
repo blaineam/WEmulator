@@ -5,7 +5,6 @@ WEmulator is a simple way to setup a static site that acts as a game library for
 
 ![Screenshot 2024-03-21 at 10 25 12 PM](https://github.com/blaineam/WEmulator/assets/16109497/68e78f2f-81eb-4f4d-adb5-7aa1c21a08b0)
 
-
 ## Requirements
 - An ability to run bash scripts on the machine with your rom files to build a map of what games you have.
 - Games must be stored in a `roms` folder structure such as:
