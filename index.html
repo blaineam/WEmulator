@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WEmulator - Arcade</title>
+        <meta name = viewport content = "width = device-width, initial-scale = 1">
+        <style>
+             body, html {
+                height: 100%;
+                margin: 0;
+                background-color: black;
+                color: white;
+            }
+
+            #search {
+                display: inline-block;
+                width: 300px;
+                max-width: calc(100% - 28px);
+                margin: 14px;
+                appearance: none;
+                /*  safari  */
+                -webkit-appearance: none;
+                font-size: 16px;
+                padding: 7px;
+                background-color: #333333EE;
+                border: 0px solid transparent;
+                border-radius: 0.25rem;
+                color: white;
+                cursor: pointer;
+            }
+
+            select {
+                appearance: none;
+                /*  safari  */
+                -webkit-appearance: none;
+                width: 100%;
+                /*  other styles for aesthetics */
+                font-size: 16px;
+                padding: 7px 32px 7px 7px;
+                background-color: #333333EE;
+                border: 0px solid transparent;
+                border-radius: 0.25rem;
+                color: white;
+                cursor: pointer;
+            }
+
+            #systems {
+                margin: 14px;
+                width: 300px;
+                max-width: calc(100% - 28px);
+                position: relative;
+                display: inline-block;
+            }
+
+            #systems::before,
+            #systems::after {
+                --size: 0.3rem;
+                content: "";
+                position: absolute;
+                right: 1rem;
+                pointer-events: none;
+            }
+
+            #systems::before {
+                border-left: var(--size) solid transparent;
+                border-right: var(--size) solid transparent;
+                border-bottom: var(--size) solid white;
+                top: 40%;
+            }
+
+            #systems::after {
+                border-left: var(--size) solid transparent;
+                border-right: var(--size) solid transparent;
+                border-top: var(--size) solid white;
+                top: 55%;
+            }
+
+            #arcade {
+                width: 100%;
+                height: 100%;
+                display: block;
+            }
+
+            #arcade a {
+                width: calc((100% / 4) - (3 * 7px));
+                height: calc((100% / 3) - (2 * 7px));
+                display: inline-block;
+                border-radius: 14px;
+                overflow: hidden;
+                margin: 7px;
+            }
+
+            /* Extra small devices (phones, 600px and down) */
+            @media only screen and (max-width: 600px) {
+                #arcade a {
+                    width: calc((100% / 1) - (0 * 7px));
+                    height: calc((100% / 2) - (2 * 7px));
+                }
+            }
+            /* Small devices (portrait tablets and large phones, 600px and up) */
+            @media only screen and (min-width: 600px) {
+                #arcade a {
+                    width: calc((100% / 2) - (2 * 7px));
+                    height: calc((100% / 2) - (2 * 7px));
+                }
+            }
+            /* Medium devices (landscape tablets, 768px and up) */
+            @media only screen and (min-width: 768px) {
+
+                #arcade a {
+                    width: calc((100% / 4) - (3 * 7px));
+                    height: calc((100% / 3) - (2 * 7px));
+                }
+            }
+            /* Large devices (laptops/desktops, 992px and up) */
+            @media only screen and (min-width: 992px) {
+                #arcade a {
+                    width: calc((100% / 5) - (4 * 7px));
+                    height: calc((100% / 4) - (3 * 7px));
+                }
+            }
+            /* Extra large devices (large laptops and desktops, 1200px and up) */
+            @media only screen and (min-width: 1200px) {
+                #arcade a {
+                    width: calc((100% / 6) - (5 * 7px));
+                    height: calc((100% / 5) - (4 * 7px));
+                }
+            }
+
+            #arcade a img {
+                object-fit: contain;
+                max-width: 100%;
+                max-height: 100%;
+                border-radius: 14px;
+                display: block;
+                overflow: hidden;
+                margin: 0 auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="systems">
+            <select id="system" onchange="filterArcade(this)">
+                <option value="all">All</option>
+                <option value="gb">Game Boy</option>
+                <option value="gbc">Game Boy Color</option>
+                <option value="gba">Game Boy Advance</option>
+                <option value="nes">Nintendo Entertainment System</option>
+                <option value="snes">Super Nintendo Entertainment System</option>
+                <option value="n64">Nintendo 64</option>
+                <option value="nds">Nintendo DS</option>
+                <option value="psx">Playstation One</option>
+                <option value="segaMD">Sega Genesis</option>
+            </select>
+        </div>
+        <input id="search" type="search" placeholder="Search ..." oninput="search(this)" />
+        <div id="arcade">
+        </div>
+        <script>
+            function basename(path) {
+                return path.split('/').reverse()[0];
+            }
+
+            function append(selector, html) {
+                document.querySelector (selector).innerHTML += html;
+            }
+
+            function clear(selector) {
+                document.querySelector (selector).innerHTML = '';
+            }
+
+            function system() {
+                return window.location.hash.substr(1);
+            }
+
+            fetch('roms/map.json').then(response => {
+                return response.json();
+            }).then(data => {
+                window.gameList = {};
+                data[0]['contents'].forEach(gamedir => {
+                    window.gameList[basename(gamedir['name'])] = [];
+                    (gamedir['contents'] ?? []).forEach(game => {
+                        window.gameList[basename(gamedir['name'])].push(basename(game['name']));
+                    });
+                });
+                buildArcade(window.gameList);
+
+            }).catch(err => {
+                console.error(err);
+                alert("No Game List available. Be sure to run the mapper to set the list of your games for the arcade to load properly.");
+                if(confirm("Do you just want to load the player and manually select your game for now?")) {
+                    window.location.href = 'play.html';
+                }
+            }); 
+
+            document.getElementById('system').value = system();
+            window.onhashchange = function () {
+                document.getElementById('system').value = system();
+            }
+
+            function filterArcade(selectObject) {
+                window.location.hash = selectObject.value;
+                buildArcade(window.gameList);
+            }
+
+            function buildArcade() {
+                clear('#arcade');
+                Object.entries(window.gameList).forEach(([systemDir, games]) => {
+                    if(system() !== "all" && systemDir !== system()) {
+                        return;
+                    }
+                    games.forEach(game => {
+                        const gamePath = `roms/${systemDir}/${game}`;
+                        const gameTitle = game.split('.')[0];
+                        if((window.searchCriteria ?? '').length > 2 && !gameTitle.toLowerCase().includes(window.searchCriteria.toLowerCase())) {
+                            return;
+                        }
+                        append('#arcade', `<a href="play.html?game=${gamePath}" title="${gameTitle}"><img src="${gamePath.replace('.zip', '')}.jpg" alt="${gameTitle}" /></a>`)
+                    });
+                });
+            }
+
+            function search(e) {
+                window.searchCriteria = e.value;
+                buildArcade();
+            }
+
+        </script>
+    </body>
+</html>
