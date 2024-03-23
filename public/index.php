@@ -18,6 +18,30 @@
  }
 
  if(isset($_SESSION['ArcadeAuthenticated'])) {
+
+    if (!file_exists('../roms/map.json')) {
+      function ReadFolderDirectory($dir,$listDir = array()) {
+          if($handler = opendir($dir)) {
+              while (($sub = readdir($handler)) !== FALSE) {
+                  if (!in_array($sub, [".", ".." , "Thumb.db", "__MAC_OSX", ".DS_Store", "@eaDir"])) {
+                      if (is_file($dir.DIRECTORY_SEPARATOR.$sub)) {
+                          $ext = pathinfo($sub, PATHINFO_EXTENSION);
+                          if (in_array(strtolower($ext), ["jpg", "jpeg", "png", "gif"])) {
+                            continue;
+                          }
+                          $listDir[] = [ "type" => "file", "name" => str_replace("../roms", ".", $dir).DIRECTORY_SEPARATOR.$sub];
+                      } else if(is_dir($dir.DIRECTORY_SEPARATOR.$sub)) {
+                          $listDir[] = [ "type" => "directory", "name" => str_replace("../roms", ".", $dir).DIRECTORY_SEPARATOR.$sub, "contents" => ReadFolderDirectory($dir.DIRECTORY_SEPARATOR.$sub)];
+                      }
+                  }
+              }
+              closedir($handler);
+          }
+          return $listDir;
+      }
+      file_put_contents('../roms/map.json', json_encode([[ "type" => "directory", "name" => "./", "contents" => ReadFolderDirectory('../roms')]], JSON_PRETTY_PRINT+JSON_UNESCAPED_SLASHES));
+    }
+
     if (isset($_GET['save'])) {
       if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (isset($_FILES["state"]) && isset($_FILES["screenshot"]) && isset($_POST["gameName"])) {
@@ -52,6 +76,7 @@
     header("Cross-Origin-Embedder-Policy: require-corp");
     if(empty($path)) {
       readfile("../index.html");
+      exit();
     }
 
     if(strstr($path, 'play.html') && !isset($_GET['cloudSaves'])) {
