@@ -81,8 +81,14 @@
 ?>
 <html>
   <head>
+    <meta name = viewport content = "width = device-width, initial-scale = 1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
       body {
+        font-family: sans-serif;
+        text-align: center;
+        background-color: black;
+        color: white;
         font-family: sans-serif;
         text-align: center;
       }
