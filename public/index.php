@@ -51,12 +51,14 @@
     header("Cross-Origin-Opener-Policy: same-origin");
     header("Cross-Origin-Embedder-Policy: require-corp");
     if(empty($path)) {
-      if(!isset($_GET['cloudSaves'])) {
-        header("Location: ?cloudSaves=1");
-        exit();
-      }
       readfile("../index.html");
     }
+
+    if(strstr($path, 'play.html') && !isset($_GET['cloudSaves'])) {
+        header("Location: ?" . (isset($_GET['game']) ? ('game=' . $_GET['game'] . '&') : '' ) . "cloudSaves=1");
+        exit();
+    }
+
     $mime = mime_content_type("../" . $path);
     $ext = pathinfo($path, PATHINFO_EXTENSION);
     $ext2mimes = [
