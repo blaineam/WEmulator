@@ -174,13 +174,6 @@
         <div id="arcade">
         </div>
         <script>
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
-
-            if (urlParams.get('cloudSaves')) {
-                window.useServerForSaves = true;
-            }
-
             function basename(path) {
                 return path.split('/').reverse()[0];
             }
@@ -244,7 +237,7 @@
                         if((window.searchCriteria ?? '').length > 2 && !gameTitle.toLowerCase().includes(window.searchCriteria.toLowerCase())) {
                             return;
                         }
-                        append('#arcade', `<a href="play.html?game=${gamePath}${window.useServerForSaves ? '&cloudSaves=1' : ''}" title="${gameTitle}"><img src="${gamePath.replace('.zip', '')}.jpg" alt="${gameTitle}" /></a>`)
+                        append('#arcade', `<a href="play.html?game=${gamePath}" title="${gameTitle}"><img loading="lazy" src="${gamePath.replace('.zip', '')}.jpg" alt="${gameTitle}" /></a>`)
                     });
                 });
             }
