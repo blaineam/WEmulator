@@ -59,7 +59,7 @@ WEmulator is a simple way to setup a static site that acts as a game library for
 
 ## Join the Effort
 
-I will always welcome constructive PRs that help mode this project towards my final goals for it being easier to setup and use.
+I will always welcome constructive PRs that help move this project towards my final goals for it being easier to setup and use.
 I want this to be completely open source and I do not wish to make money on this project. I like classic games and so I hope to provide a means for preserving home access to games for future generations.
 
 ## F.A.Q.
