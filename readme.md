@@ -3,7 +3,7 @@
 
 WEmulator is a simple way to setup a static site that acts as a game library for [EmulatorJS](https://github.com/EmulatorJS/EmulatorJS). This has no requirement of a backend server language like PHP or NodeJS since it statically compiles the list of games available to it.
 
-![Screenshot 2024-03-21 at 10 25 12 PM](https://github.com/blaineam/WEmulator/assets/16109497/68e78f2f-81eb-4f4d-adb5-7aa1c21a08b0)
+![Screenshot](https://github.com/blaineam/WEmulator/blob/main/screenshot.png?raw=true)
 
 ## Requirements
 - An ability to run bash scripts on the machine with your rom files to build a map of what games you have.
@@ -37,6 +37,7 @@ WEmulator is a simple way to setup a static site that acts as a game library for
 1. Download or clone the repo
 1. Use the `$ ./mapper.sh` file to build the required `map.json` file of your roms directory.  Note: the `mapper.sh` file depends on tree being available from your shell, If you are using a mac use `$ brew install tree` to setup tree
 1. start a web server or disable your web browsers local file restrictions.
+1. Or use `$ docker compose up -d` and point your web browser to `http://localhost:8087`
 1. Or use the Lamdi App by Blaine Miller on iOS to load the Wemulator folder from your iCloud Drive.
 1. Search for a game and click it to launch the EmulatorJS Player
 
