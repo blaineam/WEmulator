@@ -3,6 +3,8 @@
     <head>
         <title>WEmulator - Arcade</title>
         <meta name = viewport content = "width = device-width, initial-scale = 1">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="manifest" href="manifest.json">
         <style>
              body, html {
                 height: 100%;
@@ -11,10 +13,18 @@
                 color: white;
             }
 
-            #search {
+            #navigation {
+                position: sticky;
+                display: block;
+                margin: 0 auto;
+                top: 0px;
+                width: fit-content;
+            }
+
+            input {
                 display: inline-block;
                 width: 300px;
-                max-width: calc(100% - 28px);
+                max-width: calc(50% - 35px);
                 margin: 14px;
                 appearance: none;
                 /*  safari  */
@@ -46,7 +56,7 @@
             #systems {
                 margin: 14px;
                 width: 300px;
-                max-width: calc(100% - 28px);
+                max-width: calc(50% - 35px);
                 position: relative;
                 display: inline-block;
             }
@@ -76,13 +86,19 @@
 
             #arcade {
                 width: 100%;
-                height: 100%;
+                height: calc(100% - 64px);
                 display: block;
+                overflow: scroll;
+                margin-top: -64px;
+                padding-top: 64px;
+                text-align: center;
             }
 
             #arcade a {
-                width: calc((100% / 4) - (3 * 7px));
-                height: calc((100% / 3) - (2 * 7px));
+                width: calc((100% / 4) - (8 * 7px));
+                height: calc((100% / 3) - (6 * 7px));
+                min-height: 250px;
+                min-width: 250px;
                 display: inline-block;
                 border-radius: 14px;
                 overflow: hidden;
@@ -92,37 +108,37 @@
             /* Extra small devices (phones, 600px and down) */
             @media only screen and (max-width: 600px) {
                 #arcade a {
-                    width: calc((100% / 1) - (0 * 7px));
-                    height: calc((100% / 2) - (2 * 7px));
+                    width: calc((100% / 1) - (2 * 7px));
+                    height: calc((100% / 2) - (4 * 7px));
                 }
             }
             /* Small devices (portrait tablets and large phones, 600px and up) */
             @media only screen and (min-width: 600px) {
                 #arcade a {
-                    width: calc((100% / 2) - (2 * 7px));
-                    height: calc((100% / 2) - (2 * 7px));
+                    width: calc((100% / 2) - (4 * 7px));
+                    height: calc((100% / 2) - (4 * 7px));
                 }
             }
             /* Medium devices (landscape tablets, 768px and up) */
             @media only screen and (min-width: 768px) {
 
                 #arcade a {
-                    width: calc((100% / 4) - (3 * 7px));
-                    height: calc((100% / 3) - (2 * 7px));
+                    width: calc((100% / 4) - (8 * 7px));
+                    height: calc((100% / 3) - (6 * 7px));
                 }
             }
             /* Large devices (laptops/desktops, 992px and up) */
             @media only screen and (min-width: 992px) {
                 #arcade a {
-                    width: calc((100% / 5) - (4 * 7px));
-                    height: calc((100% / 4) - (3 * 7px));
+                    width: calc((100% / 5) - (10 * 7px));
+                    height: calc((100% / 4) - (8 * 7px));
                 }
             }
             /* Extra large devices (large laptops and desktops, 1200px and up) */
             @media only screen and (min-width: 1200px) {
                 #arcade a {
-                    width: calc((100% / 6) - (5 * 7px));
-                    height: calc((100% / 5) - (4 * 7px));
+                    width: calc((100% / 6) - (12 * 7px));
+                    height: calc((100% / 5) - (10 * 7px));
                 }
             }
 
@@ -138,24 +154,33 @@
         </style>
     </head>
     <body>
-        <div id="systems">
-            <select id="system" onchange="filterArcade(this)">
-                <option value="all">All</option>
-                <option value="gb">Game Boy</option>
-                <option value="gbc">Game Boy Color</option>
-                <option value="gba">Game Boy Advance</option>
-                <option value="nes">Nintendo Entertainment System</option>
-                <option value="snes">Super Nintendo Entertainment System</option>
-                <option value="n64">Nintendo 64</option>
-                <option value="nds">Nintendo DS</option>
-                <option value="psx">Playstation One</option>
-                <option value="segaMD">Sega Genesis</option>
-            </select>
+        <div id="navigation">
+            <div id="systems">
+                <select id="system" onchange="filterArcade(this)">
+                    <option value="all">All</option>
+                    <option value="gb">Game Boy</option>
+                    <option value="gbc">Game Boy Color</option>
+                    <option value="gba">Game Boy Advance</option>
+                    <option value="nes">Nintendo Entertainment System</option>
+                    <option value="snes">Super Nintendo Entertainment System</option>
+                    <option value="n64">Nintendo 64</option>
+                    <option value="nds">Nintendo DS</option>
+                    <option value="psx">Playstation One</option>
+                    <option value="segaMD">Sega Genesis</option>
+                </select>
+            </div>
+            <input id="search" type="search" placeholder="Search ..." oninput="search(this)" />
         </div>
-        <input id="search" type="search" placeholder="Search ..." oninput="search(this)" />
         <div id="arcade">
         </div>
         <script>
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+
+            if (urlParams.get('cloudSaves')) {
+                window.useServerForSaves = true;
+            }
+
             function basename(path) {
                 return path.split('/').reverse()[0];
             }
@@ -219,7 +244,7 @@
                         if((window.searchCriteria ?? '').length > 2 && !gameTitle.toLowerCase().includes(window.searchCriteria.toLowerCase())) {
                             return;
                         }
-                        append('#arcade', `<a href="play.html?game=${gamePath}" title="${gameTitle}"><img src="${gamePath.replace('.zip', '')}.jpg" alt="${gameTitle}" /></a>`)
+                        append('#arcade', `<a href="play.html?game=${gamePath}${window.useServerForSaves ? '&cloudSaves=1' : ''}" title="${gameTitle}"><img src="${gamePath.replace('.zip', '')}.jpg" alt="${gameTitle}" /></a>`)
                     });
                 });
             }
