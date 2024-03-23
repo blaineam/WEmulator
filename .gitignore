@@ -1,3 +1,6 @@
 roms/**
 bios/**
+saves/**
+screenshots/**
 .DS_Store
+.env

@@ -3,6 +3,8 @@
     <head>
         <title>WEmulator - Play</title>
         <meta name = viewport content = "width = device-width, initial-scale = 1">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="manifest" href="manifest.json">
         <style>
              body, html {
                 height: 100%;
@@ -20,6 +22,23 @@
                 align-items: center;
                 justify-content: center;
                 flex-direction: column;
+            }
+
+            #backToArcade {
+                display: block;
+                position: fixed;
+                left: 15px;
+                top: 15px;
+                background-color: #333333EE;
+                color: #aaa;
+                padding: 7px 10px;
+                z-index: 2;
+                border-radius: 15px;
+                font-family: sans-serif;
+                text-decoration: none;
+                cursor: pointer;
+                -webkit-user-select: none;
+                user-select: none;
             }
 
             #box {
@@ -82,6 +101,7 @@
     </head>
 
     <body>
+        <a id="backToArcade" href="index.html">Back</a>
         <div id = box>
             <input type = file id = input>
             Drag ROM file or click here
@@ -93,6 +113,15 @@
             if (urlParams.get('game')) {
                 url = urlParams.get('game');
                 runGame(url, basename(url));
+            }
+            
+            window.multiThread = false;
+            if (urlParams.get('multithread')) {
+                window.multiThread = true;
+            }
+
+            if (urlParams.get('cloudSaves')) {
+                window.useServerForSaves = true;
             }
 
             function basename(path) {
@@ -208,12 +237,53 @@
 
                 window.EJS_player = "#game";
                 window.EJS_gameName = parts.shift();
-                window.EJS_biosUrl = "";
+                window.EJS_biosUrl = (core == 'psx' || core == 'nds') ? `bios/${core}.zip` : '';
                 window.EJS_gameUrl = url;
                 window.EJS_core = core;
                 window.EJS_pathtodata = "emu/";
                 window.EJS_startOnLoaded = true;
                 window.EJS_disableDatabases = false;
+                if ( ['psx', 'n64', 'z64', 'gba'].includes(core)) {
+                    window.EJS_threads =  window.multiThread;
+                }
+
+                const serverSaveState = function(data) {
+                    const stateBlob = new Blob([data.state], { type: "application/octet-stream" });
+                    const screenshotBlob = new Blob([data.screenshot], { type: "image/png" });
+                    const formData = new FormData();
+                    formData.append("gameName", window.EJS_gameName);
+                    formData.append("state", stateBlob, `${window.EJS_gameName}.state`);
+                    formData.append("screenshot", screenshotBlob, `${window.EJS_gameName}.img`);
+                    const xhr = new XMLHttpRequest();
+                    xhr.open("POST", "?save=1", true);
+                    xhr.send(formData);
+                }
+
+                const serverLoadState = function() {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open("GET", `saves/${window.EJS_gameName}.state`, true);
+                    xhr.responseType = "arraybuffer";
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            const loadedState = new Uint8Array(xhr.response);
+                            EJS_emulator.gameManager.loadState(loadedState);
+                        } else {
+                            console.error("Error loading state");
+                        }
+                    };
+                    xhr.onerror = function() {
+                        console.error("Request failed");
+                    };
+                    xhr.onerror = function() {
+                        console.error("Request failed");
+                    };
+                    xhr.send();
+                };
+
+                if (window.useServerForSaves) {
+                    window.EJS_onLoadState = serverLoadState;
+                    window.EJS_onSaveState = serverSaveState;
+                }
 
                 script.src = "emu/loader.js";
                 document.body.appendChild(script);
