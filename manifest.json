@@ -1,9 +1,16 @@
 {
-    "short_name": "WEmu",
     "name": "WEmulator",
-    "background_color": "#000000",
-    "display": "standalone",
-    "scope": ".",
+    "short_name": "WEmu",
+    "icons": [
+        {
+            "src": "apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        }
+    ],
     "theme_color": "#000000",
-    "description": "WEmulator Arcade"
+    "scope": ".",
+    "start_url": "./index.html",
+    "background_color": "#000000",
+    "display": "standalone"
 }

@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/blaineam/WEmulator/blob/main/apple-touch-icon.png?raw=true" alt="WEmulator Icon of a Game Controller"/>
+</p>
+
 
 # WEmulator
 

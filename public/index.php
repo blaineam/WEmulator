@@ -17,6 +17,13 @@
   unset($_SESSION['ArcadeAuthenticated']);
  }
 
+  $path = urldecode(trim(explode('?', $_SERVER['REQUEST_URI'])[0], DIRECTORY_SEPARATOR)); 
+  if (strstr($path, 'manifest.json') || strstr($path, 'apple-touch-icon.png')) {
+    header("Content-Type: " . mime_content_type("../" . $path));
+    readfile("../" . $path);
+    exit();
+  }
+
  if(isset($_SESSION['ArcadeAuthenticated'])) {
 
     if (!file_exists('../roms/map.json')) {
@@ -107,7 +114,15 @@
 <html>
   <head>
     <meta name = viewport content = "width = device-width, initial-scale = 1">
+    <link rel="icon" type="image/png" href="apple-touch-icon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="shortcut icon" href="favicon.ico">
+    <meta name="apple-mobile-web-app-title" content="WEmu">
+    <meta name="application-name" content="WEmu">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#000000">
     <style>
       body {
         font-family: sans-serif;
