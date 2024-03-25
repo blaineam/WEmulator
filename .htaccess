@@ -1,4 +1,0 @@
-# DO NOT RELY ON THIS, YOU MUST CHANGE YOUR WEB SERVERS DOCUMENT ROOT TO public/
-RewriteEngine on
-RewriteCond %{REQUEST_URI} !^public/.*$
-RewriteRule (.*) /public/$1 [L]
