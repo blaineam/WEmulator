@@ -216,11 +216,9 @@
 
             }).catch(err => {
                 console.error(err);
-                alert("No Game List available. Be sure to run the mapper to set the list of your games for the arcade to load properly.");
-                if(confirm("Do you just want to load the player and manually select your game for now?")) {
-                    window.location.href = 'play.html';
-                }
-            }); 
+                window.location.href = 'play.html';
+                console.log("No Game List available. Be sure to run the mapper to set the list of your games for the arcade to load properly.");
+            });
 
             document.getElementById('system').value = system();
             window.onhashchange = function () {
