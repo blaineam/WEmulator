@@ -1,16 +1,16 @@
 {
-    "name": "WEmulator",
-    "short_name": "WEmu",
-    "icons": [
-        {
-            "src": "apple-touch-icon.png",
-            "sizes": "180x180",
-            "type": "image/png"
-        }
-    ],
-    "theme_color": "#000000",
-    "scope": ".",
-    "start_url": "./index.html",
-    "background_color": "#000000",
-    "display": "standalone"
+  "name": "WEmulator",
+  "short_name": "WEmu",
+  "icons": [
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#000000",
+  "scope": ".",
+  "start_url": "./index.html",
+  "background_color": "#000000",
+  "display": "standalone"
 }
